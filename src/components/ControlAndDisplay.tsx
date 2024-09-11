@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
-import { Box, Grid, TextField, Button, Chip, FormControl, InputLabel, Select, MenuItem, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
+import React, { useState ,  useRef} from 'react';
+import { Box, Grid, TextField, Chip, FormControl, InputLabel, MenuItem, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import {SelectSex} from './ui/SelectSex'
 import {SelectBMI} from './ui/SelectBMI'
 import {Ethnicity} from './ui/SelectEthnicity.tsx'
 import { StartTime } from './ui/StartTime.tsx';
 import {EndTime} from './ui/EndTime.tsx'
 import {Apply} from './ui/ApplyButton.tsx'
 import { Blocks, Columns, Rows } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 
 const initialDummyData = [
     { time: 'Jan', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
@@ -23,7 +32,9 @@ const initialDummyData = [
 const ControlAndDisplay: React.FC = () => {
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [selectedMetric, setSelectedMetric] = useState('WBC');
-    const [sex] = useState('');
+    const [sex,setSex] = useState('');
+    const [BMI,setBMI] = useState('');
+    const [ethnicity,setethnicity] = useState('');
     const [filteredData, setFilteredData] = useState(initialDummyData);
 
     const handleFilterApply = () => {
@@ -47,9 +58,40 @@ const ControlAndDisplay: React.FC = () => {
         setSelectedMetric(event.target.value);
     };
 
-    // const handleSexChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    //     setSex(event.target.value as string);
-    // };
+    const handleSexChange = (value: string) => {
+            setSex(value);
+            console.log(sex);
+    };
+
+    const handleBMIChange = (value: string) => {
+        setBMI(value);
+        console.log(BMI);
+    };
+
+    const handleethnicityChange = (value: string) => {
+        setethnicity(value);
+        console.log(ethnicity);
+};
+
+
+    const handleClearSexSelection = () => {
+        setSex('');
+    };
+
+    const handleClearBMISelection = () => {
+        setBMI('');
+    };
+
+    const handleClearethnicitySelection = () => {
+        setethnicity('');
+    };
+
+
+
+    
+
+    
+
 
     return (
         <Box sx={{ padding: 2}}>
@@ -78,12 +120,80 @@ const ControlAndDisplay: React.FC = () => {
                         </Box>
                     </Box>
                     <Box sx={{display:'flex',marginTop:4,marginBottom: 4,justifyContent:'center',alignItems:'center',}}>
-                        <div style={{margin:20}}><SelectSex /></div>
-                        <div style={{margin:20}}><SelectBMI /></div>
-                        <div style={{margin:20}}><Ethnicity /></div>
+                        <div  style={{margin:20,display:'flex'}}>
+                            <Select  onValueChange={handleSexChange}>
+                                <SelectTrigger className="w-[120px]">
+                                <SelectValue placeholder="Sex" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                
+                                    <SelectGroup >
+                                    <SelectItem value="Male" >Male</SelectItem>
+                                    <SelectItem value="Female" >Female</SelectItem>
+                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearSexSelection}>x</Button>
+                                    </SelectGroup>
+                                    
+                                </SelectContent>
+                                
+                            </Select>
+                            
+                            </div>
+                        <div style={{margin:20}}>
+                             <Select onValueChange={handleBMIChange}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="BMI" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                    <SelectLabel>Fruits</SelectLabel>
+                                    <SelectItem value="Underweight">Underweight(&lt;18)</SelectItem>
+                                    <SelectItem value="Normal">Normal(18-24.9)</SelectItem>
+                                    <SelectItem value="Overweight">Overweight(25-29.9)</SelectItem>
+                                    <SelectItem value="Obesity">Obesity(&gt;30)</SelectItem>
+                                    </SelectGroup>
+                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearBMISelection}>x</Button>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div style={{margin:20}}>
+                            <Select onValueChange={handleethnicityChange}>
+                                <SelectTrigger style={{width:180}} className="w-[180px]">
+                                    <SelectValue placeholder="Ethnicity" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                    <SelectLabel>White</SelectLabel>
+                                    <SelectItem value="White British">White British</SelectItem>
+                                    <SelectItem value="White Irish">White Irish</SelectItem>
+                                    <SelectItem value="Other White Background">Other White Background</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                    <SelectLabel>Asian</SelectLabel>
+                                    <SelectItem value="Asian Indian">Asian Indian</SelectItem>
+                                    <SelectItem value="Asian Pakistani">Asian Pakistani</SelectItem>
+                                    <SelectItem value="Asian Bangladeshi">Asian Bangladeshi</SelectItem>
+                                    <SelectItem value="Other Chinese">Other Chinese</SelectItem>
+                                    <SelectItem value="Other Asian Background">Other Asian Background</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                    <SelectLabel>Black</SelectLabel>
+                                    <SelectItem value="Black Carbbean">Black Carbbean</SelectItem>
+                                    <SelectItem value="Black African">Black African</SelectItem>
+                                    <SelectItem value="Other Black Background">Other Black Background</SelectItem>
+                                    </SelectGroup>
+                                    <SelectGroup>
+                                    <SelectLabel>Mixed</SelectLabel>
+                                    <SelectItem value="Mixed White and Asian">Mixed White and Asian</SelectItem>
+                                    <SelectItem value="Mixed White and Black African">Mixed White and Black African</SelectItem>
+                                    <SelectItem value="Mixed White and Black Caribbean">Mixed White and Black Caribbean</SelectItem>
+                                    <SelectItem value="Other Mixed Background">Other Mixed Background</SelectItem>
+                                    </SelectGroup>
+                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearethnicitySelection}>x</Button>
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <div style={{margin:20}}><StartTime /></div>
                         <div style={{margin:20}}><EndTime /></div>
-                        <div style={{margin:20}}><Apply /></div>
                         
                         
                         
