@@ -18,7 +18,10 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select"
+  } from "@/components/ui/select";
+  import DatePicker from "react-datepicker";
+  import 'react-datepicker/dist/react-datepicker.css';
+  import { cn } from "@/lib/utils"
 
 const initialDummyData = [
     { time: 'Jan', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
@@ -86,6 +89,37 @@ const ControlAndDisplay: React.FC = () => {
         setethnicity('');
     };
 
+    const [startDate, setStartDate] = useState(new Date());
+
+    const [endDate, setEndtDate] = useState(new Date());
+
+    const [direct,setdirect] = useState('flex');
+
+    const useViewport = () => {
+        const [width, setWidth] = React.useState(window.innerWidth);
+        
+      
+        React.useEffect(() => {
+          const handleWindowResize = () => setWidth(window.innerWidth);
+          window.addEventListener("resize", handleWindowResize);
+          return () => window.removeEventListener("resize", handleWindowResize);
+        }, []);
+      
+        if(width>=10){
+            setdirect('flex');
+            return 'flex';
+        }
+        else{
+            setdirect('row');
+            return 'row';
+        }
+      }
+
+
+
+
+
+
 
 
     
@@ -94,7 +128,7 @@ const ControlAndDisplay: React.FC = () => {
 
 
     return (
-        <Box sx={{ padding: 2}}>
+        <Box  sx={{ padding: 2}}>
             {/* Top Section: Filters */}
             <Box sx={{ background: 'white', border: '1px solid #ddd', borderRadius: '8px', boxShadow: 2, padding: 2, marginBottom: 4 }}>
             <Box sx={{flexDirection
@@ -192,8 +226,31 @@ const ControlAndDisplay: React.FC = () => {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div style={{margin:20}}><StartTime /></div>
-                        <div style={{margin:20}}><EndTime /></div>
+                        <div  style={{margin:20}}>
+                            <span style={{fontSize:10}}>Start Time</span>
+                        <DatePicker
+                            className={cn(
+                                "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
+                              )}
+                           selected={startDate}
+                           onChange={(date) => setStartDate(date as Date)}
+                           dateFormat="MMMM/yyyy"
+                           showMonthYearPicker
+                            />
+
+                        </div>
+                        <div style={{margin:20}}>
+                        <span style={{fontSize:10}}>Start Time</span>
+                            <DatePicker
+                            className={cn(
+                                "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
+                              )}
+                           selected={endDate}
+                           onChange={(date) => setEndtDate(date as Date)}
+                           dateFormat="MMMM/yyyy"
+                           showMonthYearPicker
+                            />
+                            </div>
                         
                         
                         
