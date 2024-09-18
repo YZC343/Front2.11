@@ -1,4 +1,4 @@
-import React, { useState ,  useRef} from 'react';
+import React, { useState ,  useRef, useEffect} from 'react';
 import { Box, Grid, TextField, Chip, FormControl, InputLabel, MenuItem, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
@@ -35,7 +35,9 @@ const initialDummyData = [
 const ControlAndDisplay: React.FC = () => {
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [selectedMetric, setSelectedMetric] = useState('WBC');
+
     const [sex,setSex] = useState('');
+    
     const [BMI,setBMI] = useState('');
     const [ethnicity,setethnicity] = useState('');
     const [filteredData, setFilteredData] = useState(initialDummyData);
@@ -62,9 +64,15 @@ const ControlAndDisplay: React.FC = () => {
     };
 
     const handleSexChange = (value: string) => {
+
             setSex(value);
-            console.log(sex);
+            
     };
+
+    useEffect(() => {
+        console.log('sex has been updated:', sex);
+        handleFilterApply();
+    }, [sex]);
 
     const handleBMIChange = (value: string) => {
         setBMI(value);
@@ -164,7 +172,7 @@ const ControlAndDisplay: React.FC = () => {
                                     <SelectGroup >
                                     <SelectItem value="Male" >Male</SelectItem>
                                     <SelectItem value="Female" >Female</SelectItem>
-                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearSexSelection}>x</Button>
+                                    
                                     </SelectGroup>
                                     
                                 </SelectContent>
