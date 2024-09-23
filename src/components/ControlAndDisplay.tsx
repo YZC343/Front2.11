@@ -22,14 +22,15 @@ import {
   import DatePicker from "react-datepicker";
   import 'react-datepicker/dist/react-datepicker.css';
   import { cn } from "@/lib/utils"
+import { newDate } from 'react-datepicker/dist/date_utils';
 
 const initialDummyData = [
-    {BMI:15 ,time: 'Jan', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
-    {BMI:20 ,time: 'Feb', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
-    {BMI:17 ,time: 'Mar', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
-    {BMI:26 ,time: 'Apr', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
-    {BMI:30 ,time: 'May', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
-    {BMI:23 ,time: 'Jun', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:15 ,time: '2024,1', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
+    {BMI:20 ,time: '2024,2', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:17 ,time: '2024,3', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
+    {BMI:26 ,time: '2024,4', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
+    {BMI:30 ,time: '2024,5', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
+    {BMI:23 ,time: '2024,6', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
 ];
 
 const ControlAndDisplay: React.FC = () => {
@@ -40,6 +41,10 @@ const ControlAndDisplay: React.FC = () => {
     
     const [BMI,setBMI] = useState('');
     const [ethnicity,setethnicity] = useState('');
+
+    const [startDate, setStartDate] = useState(new Date('2024,1'));
+    const [endDate, setEndtDate] = useState(new Date('2024,12'));
+
     const [filteredData, setFilteredData] = useState(initialDummyData);
 
     const handleFilterApply = () => {
@@ -57,13 +62,26 @@ const ControlAndDisplay: React.FC = () => {
         }
         const str = BMI;
         const range: number[] = str.split(',').map(Number);
-        
-        
+
+        const newFilterstartDate = `StartDate: ${startDate}`;
+        if (!selectedFilters.includes(newFilterstartDate) && startDate) {
+            setSelectedFilters((prev) => [...prev, newFilterstartDate]);
+        }
+
+        const newFilterendDate = `EndDate: ${endDate}`;
+        if (!selectedFilters.includes(newFilterendDate) && endDate) {
+            
+            setSelectedFilters((prev) => [...prev, newFilterendDate]);
+        }
         
 
+
+        const newFilterEthnicity = `Ethnicity: ${ethnicity}`;
         // Apply filtering based on the selected sex
         const newFilteredData = initialDummyData.filter((item) => (!sex || item.sex === sex)
-        &&((item.BMI >= range[0]&& item.BMI <= range[1])|| BMI === ''));
+        &&((item.BMI >= range[0]&& item.BMI <= range[1])|| BMI === '')
+        &&((new Date(item.time) >= startDate && new Date(item.time) <= endDate))
+    );
         setFilteredData(newFilteredData);
     };
 
@@ -77,6 +95,12 @@ const ControlAndDisplay: React.FC = () => {
         }
         else if(name === 'BMI'){
             setBMI('');
+        }
+        else if(name === 'StartDate'){
+            setStartDate(new Date('2024,1'));
+        }
+        else if(name === 'EndDate'){
+            setEndtDate(new Date('2024,12'));
         }
         handleFilterApply();
     };
@@ -94,7 +118,7 @@ const ControlAndDisplay: React.FC = () => {
     useEffect(() => {
         console.log('sex has been updated:', sex);
         handleFilterApply();
-    }, [sex,BMI],);
+    }, [sex,BMI,startDate,endDate],);
 
     const handleBMIChange = (value: string) => {
         setBMI(value);
@@ -107,9 +131,7 @@ const ControlAndDisplay: React.FC = () => {
 };
 
 
-    const [startDate, setStartDate] = useState(new Date());
-
-    const [endDate, setEndtDate] = useState(new Date());
+   
 
 
 
@@ -131,8 +153,8 @@ const ControlAndDisplay: React.FC = () => {
         <Box  sx={{ padding: 2}}>
             {/* Top Section: Filters */}
             <Box sx={{ background: 'white', border: '1px solid #ddd', borderRadius: '8px', boxShadow: 2, padding: 2, marginBottom: 4 }}>
-            <Box sx={{flexDirection
-                :'row'
+            <Box sx={{flexDirection:'column'
+
             }} >
                     <Box sx={{m: 2}}>
                         {/* Todo: Move this icon-title pattern into component */}
@@ -155,7 +177,7 @@ const ControlAndDisplay: React.FC = () => {
                     </Box>
                     <Box sx={{display:'flex',marginTop:4,marginBottom: 4,justifyContent:'center',alignItems:'center',}}>
                         <div  style={{margin:20,display:'flex'}}>
-                            <Select  onValueChange={handleSexChange}>
+                            <Select   onValueChange={handleSexChange}>
                                 <SelectTrigger className="w-[120px]">
                                 <SelectValue placeholder="Sex" />
                                 </SelectTrigger>
@@ -260,16 +282,16 @@ const ControlAndDisplay: React.FC = () => {
                         
                   
                     </Box >
-                    <div style={{display:''}} >
+                    <Box sx={{display:'inline-flex'}} >
                         {selectedFilters.map((filter, index) => (
-                            <Chip
+                            <Chip 
                                 key={index}
                                 label={filter}
                                 onDelete={() => handleChipDelete(filter)}
-                                sx={{ marginRight: 1, marginBottom: 1 }}
+                                sx={{minWidth:100, maxWidth:200, marginRight: 1, marginBottom: 1 }}
                             />
                         ))}
-                    </div>
+                    </Box>
                 </Box>
             </Box>
 
