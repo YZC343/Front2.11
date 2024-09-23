@@ -24,12 +24,12 @@ import {
   import { cn } from "@/lib/utils"
 
 const initialDummyData = [
-    { time: 'Jan', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
-    { time: 'Feb', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
-    { time: 'Mar', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
-    { time: 'Apr', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
-    { time: 'May', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
-    { time: 'Jun', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:15 ,time: 'Jan', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
+    {BMI:20 ,time: 'Feb', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:17 ,time: 'Mar', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
+    {BMI:26 ,time: 'Apr', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
+    {BMI:30 ,time: 'May', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
+    {BMI:23 ,time: 'Jun', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
 ];
 
 const ControlAndDisplay: React.FC = () => {
@@ -43,13 +43,27 @@ const ControlAndDisplay: React.FC = () => {
     const [filteredData, setFilteredData] = useState(initialDummyData);
 
     const handleFilterApply = () => {
+
+        setSelectedFilters([]);
+
         const newFilter = `Sex: ${sex}`;
         if (!selectedFilters.includes(newFilter) && sex) {
             setSelectedFilters((prev) => [...prev, newFilter]);
         }
+        
+        const newFilterBMI = `BMI: ${BMI}`;
+        if(!selectedFilters.includes(BMI) && BMI){
+            setSelectedFilters((prev) => [...prev, newFilterBMI]);
+        }
+        const str = BMI;
+        const range: number[] = str.split(',').map(Number);
+        
+        
+        
 
         // Apply filtering based on the selected sex
-        const newFilteredData = initialDummyData.filter((item) => !sex || item.sex === sex);
+        const newFilteredData = initialDummyData.filter((item) => (!sex || item.sex === sex)
+        &&((item.BMI >= range[0]&& item.BMI <= range[1])|| BMI === ''));
         setFilteredData(newFilteredData);
     };
 
@@ -57,6 +71,14 @@ const ControlAndDisplay: React.FC = () => {
         setSelectedFilters((chips) => chips.filter((chip) => chip !== chipToDelete));
         // Reset to initial data when a filter is removed
         setFilteredData(initialDummyData);
+        const name = chipToDelete.split(':')[0];
+        if(name === 'Sex'){
+            setSex('');
+        }
+        else if(name === 'BMI'){
+            setBMI('');
+        }
+        handleFilterApply();
     };
 
     const handleMetricChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +94,7 @@ const ControlAndDisplay: React.FC = () => {
     useEffect(() => {
         console.log('sex has been updated:', sex);
         handleFilterApply();
-    }, [sex]);
+    }, [sex,BMI],);
 
     const handleBMIChange = (value: string) => {
         setBMI(value);
@@ -85,43 +107,13 @@ const ControlAndDisplay: React.FC = () => {
 };
 
 
-    const handleClearSexSelection = () => {
-        setSex('');
-    };
-
-    const handleClearBMISelection = () => {
-        setBMI('');
-    };
-
-    const handleClearethnicitySelection = () => {
-        setethnicity('');
-    };
-
     const [startDate, setStartDate] = useState(new Date());
 
     const [endDate, setEndtDate] = useState(new Date());
 
-    const [direct,setdirect] = useState('flex');
 
-    const useViewport = () => {
-        const [width, setWidth] = React.useState(window.innerWidth);
-        
-      
-        React.useEffect(() => {
-          const handleWindowResize = () => setWidth(window.innerWidth);
-          window.addEventListener("resize", handleWindowResize);
-          return () => window.removeEventListener("resize", handleWindowResize);
-        }, []);
-      
-        if(width>=10){
-            setdirect('flex');
-            return 'flex';
-        }
-        else{
-            setdirect('row');
-            return 'row';
-        }
-      }
+
+    
 
 
 
@@ -188,12 +180,12 @@ const ControlAndDisplay: React.FC = () => {
                                 <SelectContent>
                                     <SelectGroup>
                                     <SelectLabel>Fruits</SelectLabel>
-                                    <SelectItem value="Underweight">Underweight(&lt;18)</SelectItem>
-                                    <SelectItem value="Normal">Normal(18-24.9)</SelectItem>
-                                    <SelectItem value="Overweight">Overweight(25-29.9)</SelectItem>
-                                    <SelectItem value="Obesity">Obesity(&gt;30)</SelectItem>
+                                    <SelectItem value="0,18">Underweight(&lt;18)</SelectItem>
+                                    <SelectItem value="18,24.9">Normal(18-24.9)</SelectItem>
+                                    <SelectItem value="25,29.9">Overweight(25-29.9)</SelectItem>
+                                    <SelectItem value="29.9,100">Obesity(&gt;30)</SelectItem>
                                     </SelectGroup>
-                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearBMISelection}>x</Button>
+                                   
                                 </SelectContent>
                             </Select>
                         </div>
@@ -230,7 +222,6 @@ const ControlAndDisplay: React.FC = () => {
                                     <SelectItem value="Mixed White and Black Caribbean">Mixed White and Black Caribbean</SelectItem>
                                     <SelectItem value="Other Mixed Background">Other Mixed Background</SelectItem>
                                     </SelectGroup>
-                                    <Button style={{width:40,}} color="white" variant="ghost" onClick={handleClearethnicitySelection}>x</Button>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -269,7 +260,7 @@ const ControlAndDisplay: React.FC = () => {
                         
                   
                     </Box >
-                    <Grid item xs={12}>
+                    <div style={{display:''}} >
                         {selectedFilters.map((filter, index) => (
                             <Chip
                                 key={index}
@@ -278,7 +269,7 @@ const ControlAndDisplay: React.FC = () => {
                                 sx={{ marginRight: 1, marginBottom: 1 }}
                             />
                         ))}
-                    </Grid>
+                    </div>
                 </Box>
             </Box>
 
