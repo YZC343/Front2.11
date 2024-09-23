@@ -1,15 +1,8 @@
-import React, { useState ,  useRef, useEffect} from 'react';
-import { Box, Grid, TextField, Chip, FormControl, InputLabel, MenuItem, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
+import React, { useState  , useEffect} from 'react';
+import { Box, Grid, Chip, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import {SelectBMI} from './ui/SelectBMI'
-import {Ethnicity} from './ui/SelectEthnicity.tsx'
-import { StartTime } from './ui/StartTime.tsx';
-import {EndTime} from './ui/EndTime.tsx'
-import {Apply} from './ui/ApplyButton.tsx'
-import { Blocks, Columns, Rows } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -22,15 +15,22 @@ import {
   import DatePicker from "react-datepicker";
   import 'react-datepicker/dist/react-datepicker.css';
   import { cn } from "@/lib/utils"
-import { newDate } from 'react-datepicker/dist/date_utils';
 
 const initialDummyData = [
-    {BMI:15 ,time: '2024,1', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
-    {BMI:20 ,time: '2024,2', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
-    {BMI:17 ,time: '2024,3', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
-    {BMI:26 ,time: '2024,4', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
-    {BMI:30 ,time: '2024,5', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
-    {BMI:23 ,time: '2024,6', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:15 ,time: '2024-01', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
+    {BMI:33 ,time: '2024-01', WBC: 6400, HGB: 16, RBC: 3.5, diagnosis: 'Diagnosis Method 5', sex: 'Female' },
+    {BMI:20 ,time: '2024-02', WBC: 6200, HGB: 13.9, RBC: 4.6, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
+    {BMI:17 ,time: '2024-03', WBC: 6100, HGB: 14.1, RBC: 4.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
+    {BMI:26 ,time: '2024-04', WBC: 6300, HGB: 14.2, RBC: 4.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
+    {BMI:30 ,time: '2024-05', WBC: 6400, HGB: 14.3, RBC: 4.9, diagnosis: 'Diagnosis Method 4', sex: 'Male' },
+    {BMI:23 ,time: '2024-06', WBC: 6500, HGB: 14.5, RBC: 5.0, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+
+    {BMI:33 ,time: '2024-07', WBC: 6400, HGB: 16, RBC: 3.5, diagnosis: 'Diagnosis Method 5', sex: 'Male' },
+    {BMI:19 ,time: '2024-08', WBC: 5900, HGB: 15.9, RBC: 6.6, diagnosis: 'Diagnosis Method 2', sex: 'Female' },
+    {BMI:27 ,time: '2024-9', WBC: 5893, HGB: 17.1, RBC: 3.7, diagnosis: 'Diagnosis Method 3', sex: 'Male' },
+    {BMI:31 ,time: '2024-10', WBC: 6123, HGB: 13.2, RBC: 8.8, diagnosis: 'Diagnosis Method 1', sex: 'Female' },
+    {BMI:20 ,time: '2024-11', WBC: 6413, HGB: 12.3, RBC: 6.9, diagnosis: 'Diagnosis Method 2', sex: 'Male' },
+    {BMI:21 ,time: '2024-12', WBC: 5734, HGB: 15.5, RBC: 4.0, diagnosis: 'Diagnosis Method 4', sex: 'Female' },
 ];
 
 const ControlAndDisplay: React.FC = () => {
@@ -42,8 +42,8 @@ const ControlAndDisplay: React.FC = () => {
     const [BMI,setBMI] = useState('');
     const [ethnicity,setethnicity] = useState('');
 
-    const [startDate, setStartDate] = useState(new Date('2024,1'));
-    const [endDate, setEndtDate] = useState(new Date('2024,12'));
+    const [startDate, setStartDate] = useState(new Date('2023,12'));
+    const [endDate, setEndtDate] = useState(new Date('2025,1'));
 
     const [filteredData, setFilteredData] = useState(initialDummyData);
 
@@ -76,7 +76,7 @@ const ControlAndDisplay: React.FC = () => {
         
 
 
-        const newFilterEthnicity = `Ethnicity: ${ethnicity}`;
+        const newFfilterEthnicity = `Ethnicity: ${ethnicity}`;
         // Apply filtering based on the selected sex
         const newFilteredData = initialDummyData.filter((item) => (!sex || item.sex === sex)
         &&((item.BMI >= range[0]&& item.BMI <= range[1])|| BMI === '')
@@ -97,10 +97,10 @@ const ControlAndDisplay: React.FC = () => {
             setBMI('');
         }
         else if(name === 'StartDate'){
-            setStartDate(new Date('2024,1'));
+            setStartDate(new Date('2023,12'));
         }
         else if(name === 'EndDate'){
-            setEndtDate(new Date('2024,12'));
+            setEndtDate(new Date('2025,1'));
         }
         handleFilterApply();
     };
@@ -118,7 +118,7 @@ const ControlAndDisplay: React.FC = () => {
     useEffect(() => {
         console.log('sex has been updated:', sex);
         handleFilterApply();
-    }, [sex,BMI,startDate,endDate],);
+    }, [sex,BMI,startDate,endDate]);
 
     const handleBMIChange = (value: string) => {
         setBMI(value);
@@ -316,9 +316,9 @@ const ControlAndDisplay: React.FC = () => {
                         />
                     </Box>
                 </Box>
-                <Grid container spacing={2}>
+                <Box display={"flex"} justifyContent={"space-between"}   >
                     {/* Left Side: Top 5 Diagnosis Methods */}
-                    <Grid item xs={12} md={4}>
+                    <div>
                         <Typography variant="h6">Top 5 Diagnosis Methods</Typography>
                         <List>
                             {filteredData.slice(0, 5).map((item, index) => (
@@ -327,10 +327,10 @@ const ControlAndDisplay: React.FC = () => {
                                 </ListItem>
                             ))}
                         </List>
-                    </Grid>
+                    </div>
 
                     {/* Right Side: Line Charts */}
-                    <Grid item xs={12} md={8}>
+                    <div style={{width:'40%'}}>
                         <FormControl component="fieldset">
                             <FormLabel component="legend">Select Metric</FormLabel>
                             <RadioGroup
@@ -348,14 +348,16 @@ const ControlAndDisplay: React.FC = () => {
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
+                                <Tooltip />
+                                <legend />
                                 <XAxis dataKey="time" />
                                 <YAxis />
                                 <Tooltip />
                                 <Line type="monotone" dataKey={selectedMetric} stroke="#8884d8" />
                             </LineChart>
                         </ResponsiveContainer>
-                    </Grid>
-                </Grid>
+                    </div>
+                </Box>
             </Box>
         </Box>
     );
