@@ -1,7 +1,8 @@
-import React, { useState  , useEffect} from 'react';
+import React, { useState  , useEffect,useLayoutEffect} from 'react';
 import { Box, Grid, Chip, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, List, ListItem, ListItemText, Typography } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import { Formik,useFormik } from 'formik';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import {
     Select,
@@ -34,16 +35,24 @@ const initialDummyData = [
 ];
 
 const ControlAndDisplay: React.FC = () => {
+
+
+    const formik = useFormik({
+        initialValues:{ startDate: new Date(2023,11), endDate: new Date(2025,1),sex:'',BMI:'0,100',ethnicity:'' },
+        onSubmit: (values) => {
+            console.log(values);
+        },
+     })
+
+
+
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [selectedMetric, setSelectedMetric] = useState('WBC');
 
-    const [sex,setSex] = useState('');
     
-    const [BMI,setBMI] = useState('');
-    const [ethnicity,setethnicity] = useState('');
+    
 
-    const [startDate, setStartDate] = useState(new Date('2023,12'));
-    const [endDate, setEndtDate] = useState(new Date('2025,1'));
+   
 
     const [filteredData, setFilteredData] = useState(initialDummyData);
 
@@ -51,40 +60,46 @@ const ControlAndDisplay: React.FC = () => {
 
         setSelectedFilters([]);
 
-        const newFilter = `Sex: ${sex}`;
-        if (!selectedFilters.includes(newFilter) && sex) {
+        const newFilter = `Sex: ${formik.values.sex}}`;
+        if (!selectedFilters.includes(newFilter) && formik.values.sex) {
             setSelectedFilters((prev) => [...prev, newFilter]);
         }
         
-        const newFilterBMI = `BMI: ${BMI}`;
-        if(!selectedFilters.includes(BMI) && BMI){
+        const newFilterBMI = `BMI: ${formik.values.BMI.toString()}`;
+        if(!selectedFilters.includes(formik.values.BMI.toString()) && formik.values.BMI){
             setSelectedFilters((prev) => [...prev, newFilterBMI]);
         }
-        const str = BMI;
+       /* const str = formik.values.BMI;
         const range: number[] = str.split(',').map(Number);
+       */
+        const range: number[] = (formik.values.BMI).split(',').map(Number);
 
-        const newFilterstartDate = `StartDate: ${startDate}`;
-        if (!selectedFilters.includes(newFilterstartDate) && startDate) {
+        const newFilterstartDate = `StartDate: ${formik.values.startDate.getMonth()}`;
+        if (!selectedFilters.includes(newFilterstartDate) && formik.values.startDate) {
             setSelectedFilters((prev) => [...prev, newFilterstartDate]);
         }
 
-        const newFilterendDate = `EndDate: ${endDate}`;
-        if (!selectedFilters.includes(newFilterendDate) && endDate) {
+        const newFilterendDate = `EndDate: ${formik.values.endDate.getMonth()}`;
+        if (!selectedFilters.includes(newFilterendDate) && formik.values.endDate) {
             
             setSelectedFilters((prev) => [...prev, newFilterendDate]);
         }
+
+        const startDate:Date= formik.values.startDate;
+        const endDate:Date = formik.values.endDate;
         
 
 
-        const newFfilterEthnicity = `Ethnicity: ${ethnicity}`;
+        const newFfilterEthnicity = `Ethnicity: ${formik.values.ethnicity}`;
         // Apply filtering based on the selected sex
-        const newFilteredData = initialDummyData.filter((item) => (!sex || item.sex === sex)
-        &&((item.BMI >= range[0]&& item.BMI <= range[1])|| BMI === '')
+        const newFilteredData = initialDummyData.filter((item) => (!formik.values.sex || item.sex === formik.values.sex)
+        &&((item.BMI >= range[0] && item.BMI <= range[1]))
         &&((new Date(item.time) >= startDate && new Date(item.time) <= endDate))
     );
         setFilteredData(newFilteredData);
     };
 
+/*
     const handleChipDelete = (chipToDelete: string) => {
         setSelectedFilters((chips) => chips.filter((chip) => chip !== chipToDelete));
         // Reset to initial data when a filter is removed
@@ -104,35 +119,24 @@ const ControlAndDisplay: React.FC = () => {
         }
         handleFilterApply();
     };
-
+*/
     const handleMetricChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedMetric(event.target.value);
     };
 
-    const handleSexChange = (value: string) => {
+  
 
-            setSex(value);
-            
-    };
-
+    
     useEffect(() => {
-        console.log('sex has been updated:', sex);
+       /* console.log('formik has been update:', formik.values);  */
         handleFilterApply();
-    }, [sex,BMI,startDate,endDate]);
+    }, [formik]);
+    
 
-    const handleBMIChange = (value: string) => {
-        setBMI(value);
-        console.log(BMI);
-    };
-
-    const handleethnicityChange = (value: string) => {
-        setethnicity(value);
-        console.log(ethnicity);
-};
-
+    
 
    
-
+ 
 
 
     
@@ -151,6 +155,8 @@ const ControlAndDisplay: React.FC = () => {
 
     return (
         <Box  sx={{ padding: 2}}>
+
+            
             {/* Top Section: Filters */}
             <Box sx={{ background: 'white', border: '1px solid #ddd', borderRadius: '8px', boxShadow: 2, padding: 2, marginBottom: 4 }}>
             <Box sx={{flexDirection:'column'
@@ -175,9 +181,23 @@ const ControlAndDisplay: React.FC = () => {
                             />
                         </Box>
                     </Box>
+
+
+
+                    <form
+                        onSubmit={formik.handleSubmit}
+                        
+                        
+                    >
                     <Box sx={{display:'flex',marginTop:4,marginBottom: 4,justifyContent:'center',alignItems:'center',}}>
-                        <div  style={{margin:20,display:'flex'}}>
-                            <Select   onValueChange={handleSexChange}>
+                        <div
+                        style={{margin:20,display:'flex'}}
+                        >
+                            <Select
+                               name='sex'
+                               onValueChange={(event: string)=>formik.setFieldValue('sex',event)}
+                             /*  value={formik.values.sex}   */
+                               >
                                 <SelectTrigger className="w-[120px]">
                                 <SelectValue placeholder="Sex" />
                                 </SelectTrigger>
@@ -195,7 +215,11 @@ const ControlAndDisplay: React.FC = () => {
                             
                             </div>
                         <div style={{margin:20}}>
-                             <Select onValueChange={handleBMIChange}>
+                             <Select 
+                                name='BMI'
+                                onValueChange={(event: string)=>formik.setFieldValue('BMI',event)}
+                               /* value={formik.values.BMI}  */
+                             >
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="BMI" />
                                 </SelectTrigger>
@@ -212,7 +236,12 @@ const ControlAndDisplay: React.FC = () => {
                             </Select>
                         </div>
                         <div style={{margin:20}}>
-                            <Select onValueChange={handleethnicityChange}>
+                            <Select 
+                                name='ethnicity'
+                                onValueChange={(event: string)=>formik.setFieldValue('ethnicity',event)}
+                                value={formik.values.ethnicity}
+                                
+                            >
                                 <SelectTrigger style={{width:180}} className="w-[180px]">
                                     <SelectValue placeholder="Ethnicity" />
                                 </SelectTrigger>
@@ -253,36 +282,35 @@ const ControlAndDisplay: React.FC = () => {
                             className={cn(
                                 "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
                               )}
-                           selected={startDate}
-                           onChange={(date) => setStartDate(date as Date)}
+                              name='startDate'
+                              selected={formik.values.startDate as unknown as Date}
+                              onChange={(event: Date| null)=>formik.setFieldValue('startDate',event)}
                            dateFormat="MMMM/yyyy"
                            showMonthYearPicker
                             />
 
                         </div>
                         <div style={{margin:20}}>
-                        <span style={{fontSize:10}}>Start Time</span>
+                        <span style={{fontSize:10}}>End Time</span>
                             <DatePicker
                             className={cn(
                                 "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
                               )}
-                           selected={endDate}
-                           onChange={(date) => setEndtDate(date as Date)}
+                           name='endDate'
+                           selected={formik.values.endDate as unknown as Date}
+                           onChange={(event: Date| null)=>formik.setFieldValue('endDate',event)}
+                        
                            dateFormat="MMMM/yyyy"
                            showMonthYearPicker
                             />
                             </div>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                  
                     </Box >
-                    <Box sx={{display:'inline-flex'}} >
+                    </form>
+
+
+
+                    
+                    <Box sx={{display:'inline-flex',width:'100%',height:'100'}} >
                         {selectedFilters.map((filter, index) => (
                             <Chip 
                                 key={index}
@@ -290,11 +318,11 @@ const ControlAndDisplay: React.FC = () => {
                                 onDelete={() => handleChipDelete(filter)}
                                 sx={{minWidth:100, maxWidth:200, marginRight: 1, marginBottom: 1 }}
                             />
-                        ))}
+                        ))}   
                     </Box>
-                </Box>
+                    
+                </Box>   
             </Box>
-
             {/* Bottom Section */}
             <Box sx={{ background: 'white', border: '1px solid #ddd', borderRadius: '8px', boxShadow: 2, padding: 2 }}>
                 <Box sx={{mb: 2}}>
