@@ -16,6 +16,7 @@ import {
   import DatePicker from "react-datepicker";
   import 'react-datepicker/dist/react-datepicker.css';
   import { cn } from "@/lib/utils"
+import { number } from 'zod';
 
 const initialDummyData = [
     {BMI:15 ,time: '2024-01', WBC: 6000, HGB: 14, RBC: 4.5, diagnosis: 'Diagnosis Method 1', sex: 'Male' },
@@ -35,13 +36,11 @@ const initialDummyData = [
 ];
 
 const ControlAndDisplay: React.FC = () => {
-
-
     const formik = useFormik({
         initialValues:{ startDate: new Date(2023,11), endDate: new Date(2025,1),sex:'',BMI:'0,100',ethnicity:'' },
         onSubmit: (values) => {
-            console.log(values);
-        },
+            
+        }
      })
 
 
@@ -74,12 +73,12 @@ const ControlAndDisplay: React.FC = () => {
        */
         const range: number[] = (formik.values.BMI).split(',').map(Number);
 
-        const newFilterstartDate = `StartDate: ${formik.values.startDate.getMonth()}`;
+        const newFilterstartDate = `StartDate: ${formik.values.startDate}`;
         if (!selectedFilters.includes(newFilterstartDate) && formik.values.startDate) {
             setSelectedFilters((prev) => [...prev, newFilterstartDate]);
         }
 
-        const newFilterendDate = `EndDate: ${formik.values.endDate.getMonth()}`;
+        const newFilterendDate = `EndDate: ${formik.values.endDate}`;
         if (!selectedFilters.includes(newFilterendDate) && formik.values.endDate) {
             
             setSelectedFilters((prev) => [...prev, newFilterendDate]);
@@ -99,27 +98,27 @@ const ControlAndDisplay: React.FC = () => {
         setFilteredData(newFilteredData);
     };
 
-/*
+
     const handleChipDelete = (chipToDelete: string) => {
         setSelectedFilters((chips) => chips.filter((chip) => chip !== chipToDelete));
         // Reset to initial data when a filter is removed
         setFilteredData(initialDummyData);
         const name = chipToDelete.split(':')[0];
         if(name === 'Sex'){
-            setSex('');
+            formik.setFieldValue('sex','');
         }
         else if(name === 'BMI'){
-            setBMI('');
+            formik.setFieldValue('BMI','0,100')
         }
         else if(name === 'StartDate'){
-            setStartDate(new Date('2023,12'));
+            formik.setFieldValue('startDate',new Date(2023,11))
         }
         else if(name === 'EndDate'){
-            setEndtDate(new Date('2025,1'));
+            formik.setFieldValue('endDate',new Date(2025,1))
         }
         handleFilterApply();
     };
-*/
+
     const handleMetricChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedMetric(event.target.value);
     };
@@ -127,10 +126,10 @@ const ControlAndDisplay: React.FC = () => {
   
 
     
-    useEffect(() => {
-       /* console.log('formik has been update:', formik.values);  */
+    useEffect(() => { 
         handleFilterApply();
-    }, [formik]);
+    }, [formik.values.sex,formik.values.BMI,formik.values.startDate,formik.values.endDate]);
+    
     
 
     
@@ -283,7 +282,7 @@ const ControlAndDisplay: React.FC = () => {
                                 "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
                               )}
                               name='startDate'
-                              selected={formik.values.startDate as unknown as Date}
+                              selected={formik.values.startDate}
                               onChange={(event: Date| null)=>formik.setFieldValue('startDate',event)}
                            dateFormat="MMMM/yyyy"
                            showMonthYearPicker
@@ -297,7 +296,7 @@ const ControlAndDisplay: React.FC = () => {
                                 "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300"
                               )}
                            name='endDate'
-                           selected={formik.values.endDate as unknown as Date}
+                           selected={formik.values.endDate}
                            onChange={(event: Date| null)=>formik.setFieldValue('endDate',event)}
                         
                            dateFormat="MMMM/yyyy"
